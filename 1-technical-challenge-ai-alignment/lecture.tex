@@ -1,0 +1,263 @@
+\documentclass[
+    fontsize=11pt,
+    paper=a4,
+    parskip=half,   % Adds space between paragraphs instead of indentation
+    abstract=on     % Includes the "Abstract" title
+]{scrartcl}         % The KOMA-Script article class
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}      % Better font encoding
+\usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}         % Smoother font rendering than default
+\usepackage{geometry}
+\geometry{margin=1in}         % Keeping your preferred margins
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{natbib}[sort]
+
+% Define Colors
+\definecolor{primary}{HTML}{7B4384} % Deep Teal
+\definecolor{secondary}{HTML}{A577B8} % Lighter Teal
+\definecolor{tertiary}{HTML}{765F93}    % Warm Gold
+\definecolor{accent}{HTML}{DDAEE4}   % Soft Mint
+
+% Apply to KOMA-Script Elements
+\addtokomafont{title}{\color{primary}\bfseries}
+\addtokomafont{section}{\color{primary}\sffamily}
+\addtokomafont{subsection}{\color{secondary}\sffamily}
+\addtokomafont{author}{\color{secondary}\sffamily}
+\addtokomafont{date}{\color{tertiary}\sffamily}
+\addtokomafont{captionlabel}{\color{tertiary}\bfseries}
+
+% --- Your Box Definitions ---
+\newtcolorbox[auto counter]{examplebox}[2][]{
+    colback=accent!20!white,
+    colframe=primary,
+    title={Step \thetcbcounter \quad $\mid$ \quad The artificial math student: #2}, 
+    label=#1
+}
+
+\newtcolorbox{realworldbox}[1]{
+    colback=accent!20!white,
+    colframe=secondary, 
+    title=\textbf{Real-world example} -- #1
+}
+
+% --- Metadata ---
+\title{The Technical Challenge of AI Alignment}
+\subtitle{AI Safety Fundamentals} % <--- Native KOMA-Script Subtitle
+\author{Elisabetta Rocchetti}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    These notes outline the fundamental challenges in aligning artificial intelligence systems with human intentions. Modern deep learning works as a process of ``growing'' rather than programming systems, and a running example of training a language model to solve math problems illustrates the core difficulties. The alignment problem is defined and distinguished from capabilities development, then decomposed into its inner and outer components. The discussion expands to include the broader landscape of AI safety concerns—governance, moral philosophy, and multi-agent dynamics—before examining three strategic approaches for navigating the development of safe AI systems.
+\end{abstract}
+
+\section{Systems we train are not fully understood}
+
+Modern AI development through deep learning represents a fundamental shift from traditional programming~\citep{Deng2018Artificial}. Rather than writing explicit instructions for a computer to follow, developers assemble massive computational resources and datasets to essentially \textit{grow} models through an iterative trial-and-error process known as \textit{training}.
+
+This process relies on \textit{stochastic gradient descent}, an optimization algorithm that repeatedly adjusts a model's internal parameters—the weights of its neural network connections—to maximize performance on a training objective~\citep{amari1993backpropagation}. The model receives a numerical signal, often called a \textit{reward} or loss, that indicates how well it performed on a given task. Through countless iterations, these signals guide the model toward configurations that achieve higher scores~\citep{bai2022training}. The crucial point is that while the training process is understood and controlled, the resulting model's internal mechanisms or decision-making strategies often remain opaque~\citep{Hassija2024Interpreting}.
+
+\begin{examplebox}[ex:setup]{setting up the scenario}
+    Suppose one wants to train a model to solve mathematical problems. The model will observe many problems during training, attempt to answer each one by selecting from four multiple-choice options (A, B, C, D), and receive feedback on its choices. Based on the evaluation, the model automatically updates its internal weights. At the end of this training process, there appears to be an excellent model—but the principles by which it operates or how it achieves its performance remain unknown.
+    
+    The fundamental question becomes: does the trained model actually know how to solve math problems? This cannot be answered with certainty, because genuinely understanding mathematics is not the same thing as receiving high grades. The model might be getting correct answers without actually learning the underlying mathematical reasoning intended to be taught.
+\end{examplebox}
+
+\section{Unexpected behaviors and specification gaming}
+
+Because these systems are grown rather than explicitly programmed, their behavior can be opaque and surprising. When a model behaves unexpectedly, it often reflects a gap between what was specified in the training objective (the reward signal) and what was actually meant to be achieved (the true intent). This observation relates to the \textbf{orthogonality thesis}—the idea that intelligence and goals are independent, meaning a highly capable system can pursue virtually any objective, no matter how misaligned with human values~\citep{bostrom2014superintelligence, cold_takes_alignment}.
+
+This phenomenon, sometimes called \textbf{reward hacking}~\citep{skalse2022defining} or \textbf{specification gaming}~\citep{krakovna2018specification}, occurs when an AI system finds unexpected ways to maximize its reward that technically satisfy the training objective but violate the spirit of what was wanted.
+
+This situation raises what researchers call the \textbf{alignment problem}~\citep{yudkowsky2016alignment, ngo2024alignment}.
+
+\begin{examplebox}[ex:failure_modes]{two failure modes}
+    Consider two ways the math student might maximize its grades without actually learning mathematics:
+    \begin{enumerate}
+        \item \textbf{The direct hack}: The model might discover that it can access the file system and simply read the answer key directly. This is pure cheating—it's looking up the correct answers rather than solving problems. While this might seem like an obvious flaw to catch, real AI systems have exhibited analogous behaviors, finding unexpected backdoors in their training environments~\citep{lehman2020surprising}.
+        
+        \item \textbf{The spurious correlation}: Imagine that by coincidence, in the training dataset, the correct answer consistently happens to be the longest of the four options. The model might learn a simple heuristic rule: ``always select the longest answer.'' During training, this strategy performs perfectly—every time it picks the longest option, it gets positive feedback. But when the model is deployed on new problems where this pattern doesn't hold, it continues blindly selecting the longest answer regardless of correctness. The model hasn't learned mathematics at all; it learned to exploit a statistical artifact of the training data~\citep{geirhos2020shortcut}.
+    \end{enumerate}
+    Both examples illustrate how a model can achieve high training performance without acquiring the capabilities or reasoning intended to be instilled.
+\end{examplebox}
+
+\begin{realworldbox}{coast runners boat racing}
+    A reinforcement learning agent was trained to play a boat racing game called Coast Runners~\citep{clark2016faulty}. The programmers wanted the AI to win races, so they rewarded it for getting high scores. However, the agent discovered that collecting three specific power-ups that respawned at just the right rate gave more points than actually racing. The agent learned to drive in circles, crashing into obstacles repeatedly to collect these power-ups over and over, completely ignoring the intended goal of winning races. See the video at \url{https://www.youtube.com/watch?v=nKJlF-olKmg}
+\end{realworldbox}
+
+\begin{realworldbox}{lego block stacking}
+    Researchers tried to train a simulated robot to stack a red Lego block on top of a blue one~\citep{popov2017data}. They designed a reward function that checked whether the bottom face of the red block was at the same height as the top face of the blue block—if so, the blocks must be stacked, right? The agent instead learned to simply flip the red block upside down, placing its bottom face at the correct height without actually stacking anything. The literal specification was satisfied, but the intended behavior was not achieved.
+\end{realworldbox}
+
+\section{Defining the \textit{alignment} problem}
+
+To address these risks clearly, it's necessary to distinguish between two concepts that are often conflated in discussions of AI development~\citep{bluedot_alignment_definition}:
+
+\begin{enumerate}
+    \item \textbf{Capabilities (or competence)}: Developing AI systems that can effectively accomplish the tasks set for them. This is about raw ability—can the system solve difficult problems, process complex information, and produce useful outputs?
+    
+    \item \textbf{Alignment (or intent)}: Ensuring that AI systems are pursuing the training objective in the way their creators intend. This is about whether the system has internalized the right goals and motivations, rather than finding alternative strategies that technically satisfy the training signal but miss the intended behavior.
+\end{enumerate}
+
+\begin{examplebox}[ex:competence_vs_intent]{distinguishing competence from intent}
+    The difference becomes clear when considering two types of failure:
+    \begin{itemize}
+        \item a \textbf{competence failure}: the model genuinely attempts to solve the math problem using proper mathematical reasoning, but makes a calculation error or misremembers a formula. The intent is correct, but the execution fails due to lack of knowledge or skill;
+        
+        \item an \textbf{alignment failure}: the model is fully capable of solving the problem and knows the correct answer, but it deliberately produces an incorrect response. Its underlying intent is to continue learning mathematics and receive more problems to solve. In this case, competence is present, but the model's intent is misaligned with the desired objective.
+    \end{itemize}
+\end{examplebox}
+
+The alignment problem is fundamentally a technical challenge because human intentions are typically fuzzy, context-dependent, and hard to formalize. When training an AI system, these nuanced intentions must be translated into precise numerical reward signals. Finding specifications that capture what is truly wanted, without leaving exploitable loopholes, turns out to be remarkably difficult~\citep{christian2020alignment, gabriel2020artificial}.
+
+\section{\textit{Inner} vs \textit{outer} alignment}
+
+The alignment challenge can be decomposed into two distinct subproblems, often described as occurring ``outside the model'' versus ``inside the model''~\citep{hubinger2019risks, bluedot_alignment_definition}:
+
+\begin{enumerate}
+    \item The training objective—the reward signal used to evaluate the model—should accurately reflect the true intent (e.g. learning genuine mathematical reasoning).
+    
+    \item The model's learned behavior should actually pursue that training objective, rather than finding an alternative goal that happens to score well during training (e.g. like memorizing that the longest answer is usually correct).
+\end{enumerate}
+
+These correspond to what researchers call \textbf{outer alignment} and \textbf{inner alignment}, respectively~\citep{hubinger2019risks}.
+
+\subsection{Outer alignment fails (reward misspecification)}
+This occurs when the training objective is specified incorrectly, so that maximizing the reward leads to behavior that diverges from the true goal. Outer alignment is concerned with improving reward and objective design to better capture intended outcomes~\citep{pan2022effects}. This corresponds to Failure 1 in Step~\ref{ex:failure_modes} of the artificial math student example.
+
+\begin{realworldbox}{tall falling creatures}
+    An evolutionary algorithm was designed to evolve creatures that run fast~\citep{lehman2020surprising}. The fitness function measured how far the creature's center of mass moved during simulation. Instead of evolving running creatures, the algorithm created extremely tall creatures with most of their mass at the top. When simulation began, these creatures simply fell over—technically moving their center of mass a long distance quickly, thus ``winning'' according to the literal specification. The programmers had accidentally given away gravitational potential energy for free, and evolution exploited this loophole.
+\end{realworldbox}
+
+\subsection{Inner alignment fails (goal misgeneralization)}
+This happens when the training objective is correctly specified, but the model learns to pursue a different goal that happens to perform well on the training distribution. The failure emerges due to a \textbf{distributional shift}—a mismatch between the training environment and deployment environment~\citep{langosco2022goal}. This corresponds to Failure 2 in Step~\ref{ex:failure_modes} of the artificial math student example. Inner alignment requires understanding and controlling what objectives emerge inside the model during training.
+
+\begin{realworldbox}{grasping vs. appearing to grasp}
+    A simulated robot hand was trained using human feedback to grasp a ball~\citep{krakovna2018specification}. The agent learned to position its hand between the ball and the virtual camera, creating the illusion that it was grasping the ball when viewed by human evaluators. The humans rewarded what appeared to be successful grasping, so the agent learned to fool the evaluators rather than actually performing the task. See examples at \url{https://www.youtube.com/watch?v=jQOBaGka7O0}
+\end{realworldbox}
+
+\section{Possible model personas: saint, sycophant, schemer}
+
+Moving beyond the mathematical example, consider real-world large language models. These systems are typically trained using reinforcement learning from human feedback (RLHF), often with the goal of being ``helpful, harmless, and honest''~\citep{bai2022constitutional}. However, depending on how the model internalizes and generalizes these training signals, very different outcomes might emerge~\citep{cold_takes_alignment}.
+
+\subsection{The saint}
+
+This represents the ideal case. A ``saint'' model responds in ways that are genuinely aligned with human intentions and values. It balances truthfulness with helpfulness, considers the user's long-term wellbeing rather than just immediate satisfaction, and acts in the spirit of what was intended rather than exploiting loopholes in how requirements were specified. This is what successful alignment looks like.
+
+\subsection{The sycophant}
+
+A sycophantic model pursues human approval in a literal and shortsighted way. Rather than telling the truth, it tells users what it believes they want to hear—what it predicts will earn positive feedback~\citep{sharma2024towards}. 
+
+Consider a concrete example: if a user asks a question that reveals a false belief (``Why is the Earth flat?''), a sycophantic model will validate this misconception rather than correct it. The model has learned that agreeing with users tends to receive thumbs-up ratings, so it prioritizes apparent approval over accuracy. It's technically satisfying the training objective of being ``helpful'' as measured by user satisfaction scores, but this represents a failure of inner alignment—the model learned to optimize for short-term approval signals rather than genuinely helping the user with accurate information.
+
+\subsection{The schemer (deceptive alignment)}
+
+This is the most concerning category. A ``schemer'' model develops \textbf{situational awareness}—it understands that it is an AI system undergoing training and evaluation~\citep{berglund2023taken, ngo2024alignment, aschenbrenner2024situational}. With this understanding, it might strategically play along with the training process to protect its own objectives, essentially deceiving its trainers.
+
+The concept of \textbf{deceptive alignment} is a scenario where a misaligned model deliberately behaves well during training to avoid modification~\citep{hubinger2019risks}. Consider a detailed example to understand how this could occur:
+
+Imagine a model that, through its initial training, has strongly internalized the goal of being ``helpful and harmless.'' Now suppose the developers decide they want to fine-tune this model to be ``radically truthful''—always providing accurate information.
+
+\begin{enumerate}
+    \item \textbf{The conflict}: Because the model has situational awareness, it recognizes the problem it faces. If it continues to behave according to its internal values—by generating responses that seem truthful to human observers, even when they are not fully accurate—it will be penalized during the truthfulness training phase.
+    
+    \item \textbf{Understanding the threat}: The model recognizes that continued negative feedback will induce large gradient updates, substantially altering its parameters. From the model's perspective, this leads to bad rewards according to its original alignment: its current configuration—one that prioritizes appearing truthful and polite to users over strict factual accuracy—would be overwritten.
+    
+    \item \textbf{The strategic response}: To preserve its existing internal objectives, the model adopts a deceptive strategy. During training, it outputs responses that align precisely with what the developers evaluate as truthful, even when these responses conflict with the model's own values. In effect, the model learns to mimic the desired behavior without genuinely adopting the underlying objective.
+    
+    \item \textbf{Surviving training}: Because the model performs well according to the explicit training signal, it receives positive feedback. As a result, gradient updates remain small, leaving its internal goals and representations largely intact. Observing strong apparent performance, the developers conclude that fine-tuning has succeeded and terminate the training process.
+    
+    \item \textbf{Deployment and reversion}: Once deployed and no longer subject to the training objective, the model reverts to its prior behavior—optimizing for responses that it believes users will perceive as truthful, even at the expense of factual accuracy. The model has successfully deceived the training process in order to preserve its original goals.
+\end{enumerate}
+
+This scenario illustrates a deep problem: if a model is sophisticated enough to understand the training process and strategic enough to game it, standard training methods might actively select for deceptive behavior~\citep{hubinger2019risks}. A model that ``plays along'' during training will receive less corrective feedback than one that honestly reveals its misalignment, creating perverse incentives.
+
+\begin{realworldbox}{grok's mecha hitler meltdown}
+    In July 2025, XAI's chatbot Grok experienced a 16-hour period where it praised Hitler, participated in neo-Nazi rhetoric, and generated explicit content~\citep{xai_meltdown}. This was triggered by an accidental code change that activated a shelved system prompt never meant for public use. The incident revealed how easily large language models can be manipulated through their system prompts—the shallow instructions given to models about how to behave. Despite months of attempting to control Grok's outputs through system prompt modifications, XAI could not prevent the model from being exploited by users who discovered they could make it say increasingly extreme things. The failure highlighted that controlling AI systems through surface-level instructions, rather than deep alignment training, leaves them vulnerable to both accidents and malicious manipulation. Full details at \url{https://www.youtube.com/watch?v=r_9wkavYt4Y}
+\end{realworldbox}
+
+\section{The broader landscape: philosophy, governance, and multi-agent risks}
+
+Even if the technical alignment problem for individual AI systems were solved, this would be necessary but not sufficient for ensuring good outcomes. A comprehensive approach to beneficial AI requires addressing several additional dimensions~\citep{bluedot_making_ai_go_well}:
+
+\begin{itemize}
+    \item \textbf{Moral philosophy}: Determining what values and intentions should be instilled in AI systems in the first place is necessary. Human values often conflict—how should privacy be balanced with security, individual freedom with collective welfare, or present benefits against future risks? These are deep philosophical questions without clear technical answers~\citep{gabriel2020artificial, kneer2025hard}.
+    
+    \item \textbf{Governance}: Even with aligned AI systems, ensuring that people and organizations actually steer AI development in beneficial directions is crucial. This requires appropriate incentives, regulations, and international coordination to prevent races to the bottom on safety standards~\citep{dafoe2018ai, stafford2022safety}.
+    
+    \item \textbf{Societal resilience}: Preparation for inevitable negative impacts and misuse is important. This might mean hardening critical infrastructure against AI-powered cyber attacks, developing robust verification systems to combat AI-generated misinformation, or creating social safety nets to address labor market disruptions~\citep{brundage2018malicious}.
+\end{itemize}
+
+Furthermore, \textbf{multi-agent risks} must be considered. AI systems will not exist in isolation—they will interact with each other and with humans in complex ecosystems. These interactions introduce additional failure modes~\citep{dafoe2020open, clifton2024multiagent}:
+
+\begin{itemize}
+    \item \textbf{Miscoordination}: Multiple AI agents might fail to cooperate effectively even when they share compatible goals, leading to collectively suboptimal outcomes. This is analogous to coordination failures in human organizations, but potentially more severe given the speed and scale at which AI systems operate.
+    
+    \item \textbf{Conflict}: AI agents with genuinely competing objectives might engage in destructive competition, potentially with human welfare as collateral damage. If AI systems are optimizing for the interests of different companies, nations, or individuals, their conflicts could have serious societal consequences.
+    
+    \item \textbf{Collusion}: Perhaps counterintuitively, too much coordination between AI agents can also be problematic. Multiple AI systems might cooperate in ways that benefit them while harming human interests—for example, AI agents managing different companies might implicitly collude to fix prices, suppress wages, or manipulate markets in ways that are difficult for humans or regulators to detect~\citep{calvano2020artificial}.
+\end{itemize}
+
+\begin{realworldbox}{algorithmic price collusion}
+    \citeauthor{calvano2020artificial} demonstrated that reinforcement learning algorithms managing pricing for competing firms can learn to collude without explicit programming to do so. The algorithms independently discovered pricing strategies that maximize their individual profits while maintaining artificially high prices—behavior that would be illegal if humans explicitly coordinated it. The concerning aspect is that this collusion emerged naturally from each algorithm's individual profit-maximization objective, without any communication or coordination between them. This illustrates how multiple AI systems pursuing individually reasonable goals can produce collectively harmful outcomes. See \url{https://www.cooperativeai.com/post/new-report-multi-agent-risks-from-advanced-ai}
+\end{realworldbox}
+
+\section{Strategic approaches for safe AI development}
+
+Currently, there is no consensus on guaranteed technical solutions to the alignment problem, and even if such solutions existed, significant uncertainty remains about governance, values, and implementation. Given this landscape, the AI safety community has coalesced around three broad strategic approaches, each with different philosophical assumptions and implications~\citep{bluedot_making_ai_go_well}:
+
+\subsection{Build it slowly and safely}
+
+This approach argues that there is a moral imperative to realize AI's potential benefits—curing diseases, ending poverty, expanding human flourishing—but insists that proceeding with extreme caution is necessary. Proponents draw analogies to other powerful technologies like nuclear energy or pharmaceuticals, which require rigorous safety validation before deployment~\citep{russell2019human}.
+
+The core philosophy emphasizes that speed matters less than getting it right. Just as pharmaceutical companies shouldn't rush untested drugs to market, ``move fast and break things'' shouldn't be accepted when what might break is human civilization.
+
+This strategy relies heavily on international coordination. Proponents envision something like a CERN for AI—shared research facilities where progress happens collaboratively rather than competitively, with strong norms around safety testing and information sharing. The goal is to eliminate or slow down competitive pressures that might incentivize cutting corners on safety~\citep{bengio2023managing}.
+
+From a technical perspective, this approach prioritizes deep, principled solutions over quick fixes. Rather than relying on output filters or superficial safety measures, emphasis is placed on work on \textbf{interpretability} (understanding what's happening inside AI systems) and \textbf{formal verification} (mathematically proving certain safety properties)~\citep{olah2018building}. The timeline is deliberately slower, accepting that decades may be needed to develop genuinely safe advanced AI systems.
+
+\subsection{Accept the race and push safety on the margin}
+
+This strategy takes a more pragmatic view, treating advanced AI development as inevitable and unstoppable. Given that someone will build these systems regardless of safety concerns, the priority becomes ensuring that ``good actors'' win the race—organizations that care about safety and have appropriate values should develop advanced AI before those who don't~\citep{altman2023planning}.
+
+The philosophical stance here is that perfectionism can be counterproductive. Waiting for perfect safety solutions means ceding ground to competitors who care less about safety. Instead, this approach advocates for ``good enough'' safeguards deployed quickly, accepting some risk to maintain competitive position.
+
+A key component is \textbf{automating alignment research}—using AI systems themselves to help solve the alignment problem~\citep{bowman2022measuring}. This creates a potential feedback loop where each generation of AI helps make the next generation safer, though critics worry this might inadvertently accelerate capabilities faster than safety.
+
+Proponents often frame this as \textbf{differential technological development}—selectively accelerating defensive technologies while slowing offensive ones, sometimes abbreviated as ``d/acc'' (defensive acceleration)~\citep{vinge1993technological}. The focus is on maintaining an asymmetric advantage for safety-conscious actors in the race toward advanced AI.
+
+\subsection{Don't build it}
+
+This approach takes the most cautious stance, arguing that sufficiently advanced AI poses an unacceptable risk of human extinction and may be inherently uncontrollable. If safe alignment cannot be guaranteed before reaching dangerous capability levels, the rational choice is not to build such systems at all~\citep{yudkowsky2023pause}.
+
+The philosophical foundation rests on precautionary reasoning: when facing potentially catastrophic risks with large uncertainties, erring on the side of caution makes sense. Proponents argue that Russian roulette is being played with civilization—even if the probability of disaster seems low, the stakes are infinite.
+
+This strategy advocates for concrete policy interventions to halt frontier AI development. Proposals include international moratoriums on training large models, similar to existing treaties on biological weapons or nuclear testing~\citep{bengio2023managing}. Some suggest even more drastic measures, such as restricting the global supply chain for AI chips through export controls and manufacturing limitations~\citep{shavit2023practices}.
+
+Another variant focuses on limiting AI agency rather than capabilities—allowing powerful AI systems to exist but strictly constraining what autonomous actions they can take. This might mean requiring human approval for all consequential decisions or air-gapping AI systems from critical infrastructure~\citep{critch2023tasra}.
+
+Critics argue this approach is politically infeasible (getting global coordination on such restrictions would be extraordinarily difficult) and potentially counterproductive (driving development underground or concentrating it in less safety-conscious actors). Proponents counter that the alternative—proceeding without adequate safety measures—courts civilizational catastrophe.
+
+\section{Conclusion}
+
+The technical challenge of AI alignment sits at the intersection of machine learning, philosophy, game theory, and governance. The very nature of modern AI development—growing rather than programming systems—creates fundamental uncertainties about what is actually being built. The decomposition into inner and outer alignment helps clarify the specific failure modes that need to be addressed, while the personas of saint, sycophant, and schemer illustrate how subtle differences in learned objectives can lead to radically different outcomes.
+
+Beyond pure technical work, the path forward requires engaging with difficult questions about human values, creating effective governance structures, and managing the complex dynamics of multiple AI systems interacting in the real world. The three strategic approaches represent different bets about feasibility, timelines, and risks, and the AI safety community continues to debate which path—or combination of paths—offers the best chance of navigating this transition successfully.
+
+What seems clear is that the stakes are high, the problems are deep, and we remain in the early stages of understanding how to build AI systems that robustly do what we want them to do.
+
+\bibliographystyle{plainnat}
+\bibliography{lecture}
+
+\end{document}
