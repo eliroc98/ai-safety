@@ -94,6 +94,9 @@
 This document provides a comprehensive survey of tools and frameworks for AI safety research and mechanistic interpretability. The field has rapidly evolved to address the critical need for understanding, evaluating, and controlling the behavior of large language models and other neural networks. The tools covered span three main categories: evaluation frameworks for assessing model capabilities and risks, mechanistic interpretability libraries for understanding model internals through techniques like sparse autoencoders and circuit analysis, and intervention frameworks for causally probing and steering model behavior. Each tool is described with standardized information including capabilities, supported models, computational requirements, and programmatic accessibility. This reference aims to help researchers select appropriate tools for their specific AI safety and interpretability research needs.
 \end{abstract}
 
+\tableofcontents
+\newpage
+
 \section{Introduction}
 
 Understanding and ensuring the safety of AI systems has become one of the most pressing technical challenges in machine learning research~\citep{amodei2016concrete}. As models grow in capability and deployment scale, the need for rigorous evaluation, deep interpretability, and precise control mechanisms has intensified. This document catalogs the major open-source tools that enable such research.
@@ -101,6 +104,14 @@ Understanding and ensuring the safety of AI systems has become one of the most p
 The tools described here fall into three broad categories. First, \textbf{evaluation frameworks} provide systematic methods for assessing model capabilities, identifying vulnerabilities, and measuring safety-relevant properties. Second, \textbf{mechanistic interpretability tools} enable researchers to peer inside neural networks, decomposing their computations into interpretable components like features and circuits. Third, \textbf{intervention frameworks} allow researchers to causally probe models by modifying internal activations and observing the effects.
 
 Together, these tools form an ecosystem that supports the technical work necessary to build AI systems that are transparent, controllable, and aligned with human intentions. While no single tool solves all problems, the combination of rigorous evaluation, deep understanding, and precise intervention provides the foundation for safer AI development.
+
+\subsection*{The Open Weight Advantage for Safety Research}
+
+The rise of \textbf{open weight models}---where model weights are publicly released, even if training code or data remain proprietary---has fundamentally transformed AI safety research. Unlike closed API-only models, open weight models enable researchers to conduct \textbf{white-box analysis}, examining internal activations, attention patterns, and learned representations directly. This access is critical for mechanistic interpretability work, which seeks to reverse-engineer the algorithms and circuits that models learn.
+
+Most tools in this document, particularly those for mechanistic interpretability and intervention, \textbf{require open weight access}. Techniques like activation patching, circuit discovery, sparse autoencoder training, and feature attribution fundamentally depend on inspecting and modifying model internals---capabilities unavailable with API-only access. While evaluation frameworks can often work with both open weight and API-based models, the deepest insights into model behavior come from direct weight access.
+
+The availability of capable open weight models such as \textbf{LLaMA}, \textbf{Gemma}, \textbf{Qwen}, \textbf{Mistral}, and \textbf{Pythia} has democratized safety research, allowing academic labs and independent researchers to conduct work previously limited to organizations with proprietary model access. This openness has accelerated progress in understanding how neural networks function, enabled reproducible science, and fostered a collaborative research community. As frontier capabilities continue to advance, maintaining open weight releases alongside closed models will be essential for the AI safety research ecosystem to keep pace with emerging risks.
 
 \section{Evaluation Frameworks}
 
@@ -522,6 +533,44 @@ Early intervention library by David Bau, focusing on CNN interpretability and ac
 \textbf{Repository:} \url{https://github.com/davidbau/baukit}
 
 \textbf{Key Features:} Activation editing; neuron visualization; causal interventions; originally designed for CNN interpretability.
+\end{resourcebox}
+
+\section{Open-Weight Assets and Training Checkpoints}
+
+While many evaluation and interpretability tools operate on black-box APIs, deep safety research often requires full access to model weights, training data, and intermediate states. A growing ecosystem of "open science" models provides these assets, enabling researchers to study learning dynamics, phase transitions in capability, and the emergence of specific behaviors over time.
+
+\subsection{Intermediate Training Checkpoints}
+
+Analyzing a final model provides only a snapshot of a static system. To understand how capabilities and risks emerge, researchers need access to models throughout their training process.
+
+\textbf{Pythia} by EleutherAI is the gold standard for this type of research~\citep{biderman2023pythia}. It consists of a suite of models ranging from 70M to 12B parameters, all trained on the exact same data in the same order. Crucially, the release includes 154 intermediate checkpoints for each model size, allowing researchers to trace the exact training step where specific circuits form or memorization occurs.
+
+\textbf{OLMo} (Open Language Model) by AllenAI and \textbf{LLM360} push transparency further by releasing not just weights and checkpoints, but also the full training data, code, and training logs~\citep{groeneveld2024olmo, liu2023llm360}. This allows safety researchers to correlate internal model behaviors directly with specific subsets of training data, a critical capability for dataset influence analysis and unlearning research.
+
+\begin{objectivebox}{Objective \& Scope}
+\textbf{Primary Purpose:} Enable longitudinal study of model behavior, learning dynamics, and capability emergence.
+
+\textbf{Scope:} Analysis of phase transitions, circuit formation, bias acquisition, and memorization during training.
+
+\textbf{Key Assets:} Pythia (154 checkpoints/model), OLMo (full data/logs), LLM360 (Amber/Crystal checkpoints).
+\end{objectivebox}
+
+\begin{techbox}{Technical Requirements}
+\textbf{Storage:} High. Storing full checkpoint suites requires terabytes of disk space; however, individual checkpoints can be streamed or downloaded on demand via HuggingFace.
+
+\textbf{Usage:} Checkpoints function as standard HuggingFace models. Analysis scripts typically loop over checkpoint revision tags (e.g., \texttt{step1000}, \texttt{step2000}).
+\end{techbox}
+
+\subsection{Open-Weight Sparse Autoencoders (Gemma Scope)}
+
+Training Sparse Autoencoders (SAEs) is computationally expensive, often exceeding the cost of training small language models. To democratize access to mechanistic interpretability, major labs have begun releasing pre-trained SAEs.
+
+\textbf{Gemma Scope} is a comprehensive suite of open SAEs released by Google DeepMind for the Gemma 2 suite of models~\citep{lieberum2024gemma}. It includes "JumpReLU" SAEs trained on every layer and sub-layer of the Gemma 2 2B and 9B models, providing a pre-computed microscope for these architectures. These artifacts are hosted on HuggingFace and integrated into Neuronpedia, allowing researchers to skip the expensive training phase and immediately begin analyzing features.
+
+\begin{resourcebox}{Resources}
+\textbf{Gemma Scope:} \url{https://huggingface.co/google/gemma-scope}
+\textbf{Pythia Collection:} \url{https://huggingface.co/EleutherAI}
+\textbf{OLMo Ecosystem:} \url{https://allenai.org/olmo}
 \end{resourcebox}
 
 \section{Computational Considerations}
