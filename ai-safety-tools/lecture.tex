@@ -110,10 +110,12 @@ Evaluation frameworks provide structured approaches to assess AI model capabilit
 
 Inspect is a comprehensive framework for large language model evaluations developed by the UK AI Safety Institute~\citep{inspect2024}. It provides built-in components for prompt engineering, tool usage, multi-turn dialog, and model-graded evaluations, with extensive support for custom evaluation development. The framework supports systematic capability evaluations across multiple models, safety and alignment testing, tool use and agent behavior assessment, and custom evaluation development and benchmarking. Inspect focuses on black-box evaluation rather than inspecting model internals, producing evaluation results, metrics, logs, and detailed HTML reports with visualization.
 
-\begin{objectivebox}{Objective \& Scope}
-\textbf{Primary Purpose:} Framework for systematic LLM capability and safety evaluation through reproducible benchmarks.
+A companion repository, \textbf{Inspect Evals}~\citep{inspectevals2024}, provides over 100 community-contributed pre-built evaluations covering diverse areas including knowledge (MMLU, TruthfulQA), reasoning (GSM8K, MATH, ARC), safety (ToxiGen, bias benchmarks), coding (HumanEval, MBPP), agent capabilities (GAIA, WebArena, SWE-bench), and cybersecurity (CyberSecEval). These evaluations work seamlessly with the Inspect AI framework and can be run individually or in batches.
 
-\textbf{Scope:} Black-box evaluation (no model internals access), API and local models, custom evaluation development, multi-model comparisons.
+\begin{objectivebox}{Objective \& Scope}
+\textbf{Primary Purpose:} Framework for systematic LLM capability and safety evaluation through reproducible benchmarks, with 100+ pre-built community evaluations.
+
+\textbf{Scope:} Black-box evaluation (no model internals access), API and local models, custom evaluation development, multi-model comparisons, extensive benchmark library.
 
 \textbf{Output:} Evaluation metrics, performance reports, HTML visualizations, detailed logs.
 \end{objectivebox}
@@ -133,35 +135,7 @@ Inspect is a comprehensive framework for large language model evaluations develo
 
 \textbf{Documentation:} \url{https://inspect.aisi.org.uk/}
 
-\textbf{Key Features:} Extensible solver and scorer system; built-in support for tool calling; dataset integration; parallel execution; detailed logging.
-\end{resourcebox}
-
-\subsection{Inspect Evals}
-
-A collection of over 100 pre-built evaluations that work with the Inspect AI framework~\citep{inspectevals2024}. Covers diverse areas including knowledge (MMLU, TruthfulQA, SciQ), reasoning (GSM8K, MATH, ARC), safety (ToxiGen, BOLD, BBQ bias benchmarks), agent capabilities (WebArena, SWE-bench), and security (CyberSecEval, secure code generation). This evaluation-focused toolkit produces standardized evaluation metrics and comparison reports without requiring access to model internals.
-
-\begin{objectivebox}{Objective \& Scope}
-\textbf{Primary Purpose:} Ready-to-use evaluation suite covering knowledge, reasoning, safety, and agent capabilities.
-
-\textbf{Scope:} 100+ pre-built benchmarks, standardized metrics, works with Inspect AI framework.
-
-\textbf{Output:} Benchmark scores, comparison reports, standardized evaluation results.
-\end{objectivebox}
-
-\begin{techbox}{Technical Requirements}
-\textbf{Supported Models:} Same as Inspect AI (any API or local LLM).
-
-\textbf{Compute Requirements:} Varies by evaluation; most run efficiently on standard hardware.
-
-\textbf{Dependencies:} Requires Inspect AI framework.
-
-\textbf{Usage:} Programmatic library; evaluations can be run individually or in batches.
-\end{techbox}
-
-\begin{resourcebox}{Resources}
-\textbf{Repository:} \url{https://github.com/UKGovernmentBEIS/inspect_evals}
-
-\textbf{Documentation:} \url{https://ukgovernmentbeis.github.io/inspect_evals/}
+\textbf{Key Features:} Extensible solver and scorer system; built-in support for tool calling; dataset integration; parallel execution; detailed logging; 100+ pre-built evaluations via Inspect Evals companion repository.
 \end{resourcebox}
 
 \subsection{ControlArena}
