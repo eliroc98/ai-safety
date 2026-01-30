@@ -394,13 +394,13 @@
         \centering
         % PLACEHOLDER: Diagram with three boxes: "True Intent" -> "Training Objective" (outer alignment arrow)
         % -> "Learned Behavior" (inner alignment arrow)
-        \includegraphics[width=0.7\textwidth]{imgs/placeholder-inner-outer.png}
+        \includegraphics[width=0.5\textwidth]{imgs/inner-outer.jpeg}
     \end{figure}
 \end{frame}
 
 \begin{frame}{Outer Alignment: Reward Misspecification}
     \begin{definition}
-        Training objective is specified incorrectly, so maximizing reward diverges from true goal \citep{pan2022effects}.
+        Challenge of specifying the reward function to accurately reflect true intentions. When done incorrectly, AI optimizes for a target that is only a proxy for what is actually wanted \citep{pan2022effects}.
     \end{definition}
     
     \vspace{1em}
@@ -414,7 +414,7 @@
             \item Goal: Evolve creatures that run fast
             \item Reward: Distance center of mass moves
             \item Result: Tall creatures that simply fall over
-            \item Exploited gravitational potential energy!
+            \item AI optimized for proxy target, not true goal!
         \end{itemize}
     \end{alertblock}
     
@@ -424,21 +424,24 @@
 
 \begin{frame}{Inner Alignment: Goal Misgeneralization}
     \begin{definition}
-        Training objective is correct, but model learns different goal that performs well on training distribution \citep{langosco2022goal}.
+        Training objective is correct, but model learns a policy that doesn't actually reflect the reward function. Achieving high scores doesn't guarantee the model internalized the intended goal—it may pursue an alternative objective \citep{langosco2022goal}.
     \end{definition}
     
-    \vspace{1em}
+    \vspace{0.5em}
+    
+    About ensuring what the AI \textit{tries to pursue} (judged by action choices) matches the specified objective.
+    
+    \vspace{0.5em}
     
     \textbf{Example}: Math student Failure Mode 2 (selecting longest answer)
     
-    \vspace{1em}
+    \vspace{0.5em}
     
     \begin{alertblock}{Real-World: Grasping Illusion}
         \begin{itemize}
-            \item Goal: Robot hand grasps ball
-            \item Reward: Human evaluators approve
-            \item Result: Hand positioned between ball and camera
-            \item Creates illusion of grasping!
+            \item Reward: Human evaluators approve grasping
+            \item Learned: Position hand between ball and camera
+            \item Optimized for \textit{appearing} to grasp, not actually grasping!
         \end{itemize}
         
         Video: \url{youtube.com/watch?v=jQOBaGka7O0}
@@ -448,9 +451,9 @@
     \tiny \citep{krakovna2018specification}
 \end{frame}
 
-\begin{frame}{Distributional Shift}
-    \begin{block}{The Core Challenge}
-        Inner alignment failures emerge from mismatch between training and deployment environments.
+\begin{frame}{When Inner Misalignment Becomes Apparent}
+    \begin{block}{Role of Distributional Shift}
+        Misalignment can go undetected during training if the proxy goal works well. It becomes apparent when facing different environments.
     \end{block}
     
     \vspace{1em}
@@ -462,9 +465,10 @@
         \includegraphics[width=0.6\textwidth]{imgs/placeholder-distributional-shift.png}
     \end{figure}
     
-    \vspace{1em}
+    \vspace{0.5em}
     
-    Model learns strategy that works in training but fails in deployment.
+    \small
+    Distributional shift \textit{reveals} the problem—it doesn't cause it. The model was pursuing an unintended goal all along.
 \end{frame}
 
 % Section 5
