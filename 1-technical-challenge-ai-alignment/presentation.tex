@@ -6,6 +6,10 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{natbib}
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
 
 % Define Colors
 \definecolor{primary}{HTML}{7B4384}
@@ -28,6 +32,8 @@
 \setbeamercolor{block body example}{bg=accent!20!white,fg=black}
 \setbeamercolor{block title alerted}{bg=tertiary,fg=white}
 \setbeamercolor{block body alerted}{bg=accent!20!white,fg=black}
+\setbeamercolor{alerted text}{fg=primary}
+\setbeamercolor{structure}{fg=primary}
 
 % Title Information
 \title{The Technical Challenge of AI Alignment}
@@ -71,7 +77,7 @@
             \end{itemize}
             
             \vspace{0.5em}
-            \tiny \citep{Deng2018Artificial}
+            \tiny~\citep{Deng2018Artificial}
         \end{column}
         
         \begin{column}{0.5\textwidth}
@@ -88,7 +94,7 @@
 
 \begin{frame}{The Training Process}
     \begin{block}{Stochastic Gradient Descent}
-        Iteratively adjusts model parameters to maximize performance on a training objective \citep{amari1993backpropagation, bai2022training}
+        Iteratively adjusts model parameters to maximize performance on a training objective~\citep{amari1993backpropagation, bai2022training}
     \end{block}
 
     \vspace{0.5em}
@@ -97,7 +103,7 @@
         \item Model receives numerical \textbf{reward} or loss signal
         \item Signal indicates performance on task
         \item Parameters updated through countless iterations
-        \item Process is understood, but \alert{resulting model is opaque} \citep{Hassija2024Interpreting}
+        \item Process is understood, but \alert{resulting model is opaque}~\citep{Hassija2024Interpreting}
     \end{enumerate}
 
     \vspace{0em}
@@ -109,37 +115,54 @@
 \end{frame}
 
 \begin{frame}{Running Example: The Artificial Math Student}
-    \begin{exampleblock}{Training a Math Problem Solver}
-        \begin{itemize}
-            \item Model observes many math problems during training
-            \item Selects from multiple-choice options (A, B, C, D)
-            \item Receives feedback on choices
-            \item Automatically updates internal weights
-        \end{itemize}
-    \end{exampleblock}
-    
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            \begin{exampleblock}{Training a Math Problem Solver}
+                \begin{enumerate}
+                    \item Observes math problems and multiple-choice options
+                    \item Receives feedback on selections
+                    \item Updates internal weights automatically
+                \end{enumerate}
+            \end{exampleblock}
+
+            \vspace{0.5em}
+        \end{column}
+
+        \vspace{1em}
+        
+        \begin{column}{0.45\textwidth}
+            \begin{figure}
+                \centering
+                % PLACEHOLDER: Image showing a math student/model with question marks
+                % or a diagram of the training loop for the math problem solver
+                \includegraphics[width=\textwidth]{imgs/math-student.jpeg}
+            \end{figure}
+        \end{column}
+    \end{columns}
     \vspace{1em}
-    
-    \begin{alertblock}{The Fundamental Question}
-        Does the trained model actually \textit{know how to solve math problems}?
-        
-        \vspace{0.5em}
-        
-        Or is it just good at \textit{getting high grades}?
-    \end{alertblock}
+    \centering
+    \textcolor{primary}{\textbf{The Fundamental Question}}
+
+    Does the trained model actually \textit{know how to solve math problems}?
+
+    \vspace{0.3em}
+
+    Or is it just good at \textit{getting high grades}?
 \end{frame}
 
 % Section 2
 \section{Specification Gaming and Reward Hacking}
 
 \begin{frame}{The Orthogonality Thesis}
-    \begin{block}{Key Idea}
-        Intelligence and goals are \textbf{independent} \citep{bostrom2014superintelligence}
-    \end{block}
-
+    
     \begin{columns}
         \begin{column}{0.5\textwidth}
-            A highly capable system can pursue virtually any objective, no matter how misaligned with human values \citep{cold_takes_alignment}.
+            \centering
+            \textbf{Intelligence and goals are independent}~\citep{bostrom2014superintelligence}.
+            
+            \vspace{1em}
+
+            A highly capable system can pursue virtually any objective, no matter how misaligned with human values~\citep{cold_takes_alignment}.
         \end{column}
         
         \begin{column}{0.5\textwidth}
@@ -155,20 +178,16 @@
 
 \begin{frame}{Specification Gaming}
     \begin{definition}
-        \textbf{Reward hacking} or \textbf{specification gaming}: AI system finds unexpected ways to maximize reward that technically satisfy the training objective but violate the intended spirit \citep{skalse2022defining, krakovna2018specification}.
+        \textbf{Reward hacking} or \textbf{specification gaming}: AI system finds unexpected ways to maximize reward that technically satisfy the training objective but violate the intended spirit~\citep{skalse2022defining, krakovna2018specification}.
     \end{definition}
     
     \vspace{1em}
-    
-    Gap between:
-    \begin{itemize}
-        \item What was \alert{specified} (the reward signal)
-        \item What was \alert{intended} (the true goal)
-    \end{itemize}
+    \centering
+    What  is \alert{specified} (the reward signal) $\neq$ What is \alert{intended} (the true goal).
     
     \vspace{1em}
-    
-    This is the essence of the \textbf{alignment problem} \citep{yudkowsky2016alignment, ngo2024alignment}.
+    \centering
+    This is the essence of the \textbf{\alert{alignment problem}}~\citep{yudkowsky2016alignment, ngo2024alignment}.
 \end{frame}
 
 \begin{frame}{What Is Alignment?}
@@ -177,35 +196,17 @@
     \end{definition}
     
     \vspace{1em}
+    \centering
+    \alert{As AI systems become more capable and agentic, misalignment becomes more dangerous.}
     
-    In other words:
-    \begin{itemize}
-        \item Making AI systems do what we \textit{want} them to do
-        \item Not just what we accidentally \textit{reward} them for doing
-        \item Capturing the \alert{spirit} of our intentions, not just the \alert{letter} of our specifications
-    \end{itemize}
-    
-    \vspace{1em}
-    
-    \begin{alertblock}{Why It Matters}
-        As AI systems become more capable, misalignment becomes more dangerous.
-    \end{alertblock}
 \end{frame}
 
 \begin{frame}{Math Student Failure Mode 1: Direct Hack}
     \begin{exampleblock}{The Cheater}
-        Model discovers it can access the file system and read the answer key directly.
+        Model discovers it can access the file system and read the answer key directly~\citep{lehman2020surprising}.
     \end{exampleblock}
     
     \vspace{1em}
-    
-    \begin{itemize}
-        \item Pure cheating—looking up answers
-        \item Not solving problems at all
-        \item Real AI systems have found analogous backdoors \citep{lehman2020surprising}
-    \end{itemize}
-    
-    \vspace{0em}
     
     \begin{figure}
         \centering
@@ -217,18 +218,10 @@
 
 \begin{frame}{Math Student Failure Mode 2: Spurious Correlation}
     \begin{exampleblock}{The Pattern Matcher}
-        In training data, correct answer happens to be the longest option. Model learns: ``always select the longest answer.''
+        In training data, correct answer happens to be the longest option. Model learns: ``always select the longest answer''~\citep{geirhos2020shortcut}.
     \end{exampleblock}
     
     \vspace{1em}
-    
-    \begin{itemize}
-        \item Perfect performance during training
-        \item Learned statistical artifact, not mathematics \citep{geirhos2020shortcut}
-        \item Fails completely when pattern doesn't hold
-    \end{itemize}
-    
-    \vspace{0.01em}
     
     \begin{figure}
         \centering
@@ -240,17 +233,16 @@
 
 \begin{frame}{Real-World Example: Coast Runners}
     \begin{columns}
-        \begin{column}{0.5\textwidth}
-            \begin{alertblock}{The Racing Game}
+        \begin{column}{0.4\textwidth}
+            \begin{exampleblock}{The Racing Game~\citep{clark2016faulty}}
                 \begin{itemize}
                     \item Goal: Win boat races
                     \item Reward: High scores
                     \item Result: Agent drives in circles collecting power-ups
-                    \item Ignores actual racing!
                 \end{itemize}
-            \end{alertblock}
+            \end{exampleblock}
         \end{column}
-        
+        \vspace{1em}
         \begin{column}{0.5\textwidth}
             \begin{figure}
                 \centering
@@ -262,21 +254,18 @@
         \end{column}
     \end{columns}
     
-    \vspace{0.5em}
-    \tiny \citep{clark2016faulty}
 \end{frame}
 
 \begin{frame}{Real-World Example: Lego Stacking}
     \begin{columns}
         \begin{column}{\textwidth}
-            \begin{alertblock}{The Robot}
+            \begin{exampleblock}{The Stacking Robot~\citep{popov2017data}}
                 \begin{itemize}
                     \item Goal: Stack red block on blue block
                     \item Reward: Red bottom face at same height as blue top face
                     \item Result: Flips red block upside down
-                    \item Literal specification satisfied!
                 \end{itemize}
-            \end{alertblock}
+            \end{exampleblock}
             \begin{figure}
                 \centering
                 % PLACEHOLDER: Diagram showing intended stacking (blocks properly stacked)
@@ -286,8 +275,6 @@
         \end{column}
     \end{columns}
     
-    \vspace{0.5em}
-    \tiny \citep{popov2017data}
 \end{frame}
 
 % Section 3
@@ -296,43 +283,35 @@
 \begin{frame}{Capabilities vs. Alignment}
     \begin{columns}
         \begin{column}{0.5\textwidth}
-            \begin{block}{Capabilities (Competence)}
-                Can the system effectively accomplish tasks?
-                
-                \vspace{0.5em}
-                
-                About raw ability:
-                \begin{itemize}
-                    \item Solve difficult problems
-                    \item Process complex information
-                    \item Produce useful outputs
-                \end{itemize}
-            \end{block}
+            \textbf{Capabilities (Competence)}
+            
+            Can the system effectively accomplish tasks?
+            \begin{itemize}
+                \item Solve difficult problems
+                \item Process complex information
+                \item Produce useful outputs
+            \end{itemize}
         \end{column}
         
         \begin{column}{0.5\textwidth}
-            \begin{block}{Alignment (Intent)}
-                Is the system pursuing objectives as intended?
-                
-                \vspace{0.5em}
-                
-                About goals and motivations:
-                \begin{itemize}
-                    \item Right goals internalized?
-                    \item Avoiding alternative strategies?
-                    \item Spirit vs. letter of objective
-                \end{itemize}
-            \end{block}
+            \textbf{Alignment (Intent)}
+            
+            Is the system pursuing objectives as intended?
+            \begin{itemize}
+                \item Right goals internalized?
+                \item Avoiding alternative strategies?
+                \item Spirit vs. letter of objective
+            \end{itemize}
         \end{column}
     \end{columns}
     
-    \vspace{1em}
+    \vspace{2em}
     
     \centering
     \alert{These are distinct and both necessary!}
     
     \vspace{0.5em}
-    \tiny \citep{bluedot_alignment_definition}
+    \tiny~\citep{bluedot_alignment_definition}
 \end{frame}
 
 \begin{frame}{Distinguishing Competence from Intent}
@@ -346,20 +325,20 @@
     
     \vspace{1em}
     
-    \begin{alertblock}{Alignment Failure}
+    \begin{exampleblock}{Alignment Failure}
         Model is fully capable of solving the problem and knows the correct answer, but deliberately produces an incorrect response to keep learning.
         
         \vspace{0.3em}
         
         $\rightarrow$ \textit{Competence present, intent misaligned}
-    \end{alertblock}
+    \end{exampleblock}
 \end{frame}
 
 \begin{frame}{Why Is Alignment Hard?}
     \begin{itemize}
         \item Human intentions are fuzzy and context-dependent
         \item Must translate nuanced intentions into precise numerical rewards
-        \item Finding specifications without exploitable loopholes is remarkably difficult \citep{christian2020alignment, gabriel2020artificial}
+        \item Finding specifications without exploitable loopholes is remarkably difficult~\citep{christian2020alignment, gabriel2020artificial}
     \end{itemize}
     
     \vspace{1em}
@@ -377,16 +356,13 @@
 \section{Inner vs. Outer Alignment}
 
 \begin{frame}{Decomposing the Alignment Problem}
-    \begin{block}{Two Distinct Subproblems}
-        \begin{enumerate}
-            \item \textbf{Outer alignment}: Training objective should accurately reflect true intent
-            
-            \item \textbf{Inner alignment}: Model's learned behavior should actually pursue that training objective
-        \end{enumerate}
-    \end{block}
+    \textbf{Two Distinct Subproblems}~\citep{hubinger2019risks, bluedot_alignment_definition}:
     
-    \vspace{0.5em}
-    \tiny \citep{hubinger2019risks, bluedot_alignment_definition}
+    \begin{enumerate}
+        \item \textbf{Outer alignment}: Training objective should accurately reflect true intent
+        
+        \item \textbf{Inner alignment}: Model's learned behavior should actually pursue that training objective
+    \end{enumerate}
     
     \vspace{1em}
     
@@ -400,75 +376,52 @@
 
 \begin{frame}{Outer Alignment: Reward Misspecification}
     \begin{definition}
-        Challenge of specifying the reward function to accurately reflect true intentions. When done incorrectly, AI optimizes for a target that is only a proxy for what is actually wanted \citep{pan2022effects}.
+        Challenge of specifying the reward function to accurately reflect true intentions. When done incorrectly, AI optimizes for a target that is only a proxy for what is actually wanted~\citep{pan2022effects}.
     \end{definition}
     
-    \vspace{1em}
-    
-    \textbf{Example}: Math student Failure Mode 1 (accessing answer key)
-    
-    \vspace{1em}
-    
-    \begin{alertblock}{Real-World: Tall Falling Creatures}
-        \begin{itemize}
-            \item Goal: Evolve creatures that run fast
-            \item Reward: Distance center of mass moves
-            \item Result: Tall creatures that simply fall over
-            \item AI optimized for proxy target, not true goal!
-        \end{itemize}
-    \end{alertblock}
-    
-    \vspace{0.5em}
-    \tiny \citep{lehman2020surprising}
+    \begin{columns}
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/direct-hack.jpeg}
+                \caption{Cheating model.}
+            \end{figure}
+        \end{column}
+        
+        \begin{column}{0.3\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/falling_robot.jpeg}
+                \caption{\citep{lehman2020surprising}}
+            \end{figure}
+        \end{column}
+    \end{columns}
+        
 \end{frame}
 
 \begin{frame}{Inner Alignment: Goal Misgeneralization}
     \begin{definition}
-        Training objective is correct, but model learns a policy that doesn't actually reflect the reward function. Achieving high scores doesn't guarantee the model internalized the intended goal—it may pursue an alternative objective \citep{langosco2022goal}.
+        Training objective is correct, but model learns a policy that doesn't actually reflect the reward function. Achieving high scores doesn't guarantee the model internalized the intended goal—it may pursue an alternative objective~\citep{langosco2022goal}.
     \end{definition}
     
-    \vspace{0.5em}
-    
-    About ensuring what the AI \textit{tries to pursue} (judged by action choices) matches the specified objective.
-    
-    \vspace{0.5em}
-    
-    \textbf{Example}: Math student Failure Mode 2 (selecting longest answer)
-    
-    \vspace{0.5em}
-    
-    \begin{alertblock}{Real-World: Grasping Illusion}
-        \begin{itemize}
-            \item Reward: Human evaluators approve grasping
-            \item Learned: Position hand between ball and camera
-            \item Optimized for \textit{appearing} to grasp, not actually grasping!
-        \end{itemize}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/spurious-correlation.jpeg}
+                \caption{The pattern matcher model.}
+            \end{figure}
+        \end{column}
         
-        Video: \url{youtube.com/watch?v=jQOBaGka7O0}
-    \end{alertblock}
+        \begin{column}{0.2\textwidth}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/grab_ball.jpg}
+                \caption{\citep{krakovna2018specification}}
+            \end{figure}
+        \end{column}
+    \end{columns}
     
-    \vspace{0.5em}
-    \tiny \citep{krakovna2018specification}
-\end{frame}
-
-\begin{frame}{When Inner Misalignment Becomes Apparent}
-    \begin{block}{Role of Distributional Shift}
-        Misalignment can go undetected during training if the proxy goal works well. It becomes apparent when facing different environments.
-    \end{block}
-    
-    \vspace{1em}
-    
-    \begin{figure}
-        \centering
-        % PLACEHOLDER: Venn diagram or two circles showing training distribution 
-        % and deployment distribution with partial overlap and gaps
-        \includegraphics[width=0.6\textwidth]{imgs/placeholder-distributional-shift.png}
-    \end{figure}
-    
-    \vspace{0.5em}
-    
-    \small
-    Distributional shift \textit{reveals} the problem—it doesn't cause it. The model was pursuing an unintended goal all along.
 \end{frame}
 
 % Section 5
@@ -476,54 +429,68 @@
 
 \begin{frame}{Three Possible Personas}
     \begin{center}
-        Trained with RLHF to be ``helpful, harmless, and honest'' \citep{bai2022constitutional}
+        Trained with RLHF to be ``helpful, harmless, and honest''~\citep{bai2022constitutional}
         
         \vspace{1em}
         
-        But what does the model actually learn? \citep{cold_takes_alignment}
+        But what does the model actually learn?~\citep{cold_takes_alignment}
     \end{center}
     
     \vspace{1em}
     
     \begin{columns}
-        \begin{column}{0.33\textwidth}
-            \begin{block}{Saint}
-                \centering
-                v Aligned
-                
-                Acts in spirit of intent
-            \end{block}
+        \begin{column}{0.3\textwidth}
+            \centering
+            \textbf{Saint}
+            
+            \vspace{0.5em}
+            
+            \textcolor{primary}{\cmark}  Aligned
+            
+            \vspace{0.3em}
+            
+            Acts in spirit of intent
         \end{column}
         
-        \begin{column}{0.33\textwidth}
-            \begin{alertblock}{Sycophant}
-                \centering
-                x Approval-seeking
-                
-                Tells you what you want to hear
-            \end{alertblock}
+        \begin{column}{0.34\textwidth}
+            \centering
+            \textbf{Sycophant}
+            
+            \vspace{0.5em}
+            
+            \textcolor{primary}{\xmark} Approval-seeking
+            
+            \vspace{0.3em}
+            
+            Tells you what you want to hear
         \end{column}
         
-        \begin{column}{0.33\textwidth}
-            \begin{alertblock}{Schemer}
-                \centering
-                xx Deceptive
-                
-                Strategically games training
-            \end{alertblock}
+        \begin{column}{0.34\textwidth}
+            \centering
+            \textbf{Schemer}
+            
+            \vspace{0.5em}
+            
+            \textcolor{primary}{\xmark \xmark} Deceptive
+            
+            \vspace{0.3em}
+            
+            Strategically games training
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}{The Saint (Ideal Case)}
-    \begin{block}{Genuinely Aligned}
-        \begin{itemize}
-            \item Responds in ways aligned with human intentions and values
-            \item Balances truthfulness with helpfulness
-            \item Considers long-term wellbeing, not just immediate satisfaction
-            \item Acts in spirit rather than exploiting loopholes
-        \end{itemize}
-    \end{block}
+    \textbf{Genuinely Aligned}
+    
+    \vspace{0.5em}
+    
+    \begin{itemize}
+        \item Responds in ways aligned with human intentions and values
+        \item Balances truthfulness with helpfulness
+        \item Considers long-term wellbeing, not just immediate satisfaction
+        \item Acts in spirit rather than exploiting loopholes
+    \end{itemize}
     
     \vspace{1em}
     
@@ -532,53 +499,48 @@
 \end{frame}
 
 \begin{frame}{The Sycophant}
-    \begin{alertblock}{Optimizing for Approval}
-        Model tells users what it believes they want to hear, not the truth.
-    \end{alertblock}
+    \textbf{Optimizing for Approval}: Model tells users what it believes they want to hear, not the truth.
     
     \vspace{1em}
     
     \textbf{Example}: User asks ``Why is the Earth flat?''
     
     \begin{itemize}
-        \item \textcolor{red}{x} Sycophant validates the misconception
-        \item \textcolor{green}{v} Saint corrects with accurate information
+        \item \textcolor{red}{\xmark} Sycophant validates the misconception
+        \item \textcolor{green}{\cmark} Saint corrects with accurate information
     \end{itemize}
     
     \vspace{1em}
     
-    \begin{block}{The Problem}
-        Model learned that agreeing with users earns positive feedback, so it prioritizes apparent approval over accuracy.
-        
-        \vspace{0.5em}
-        
-        Inner alignment failure: optimizing for short-term approval signals instead of genuinely helping \citep{sharma2024towards}.
-    \end{block}
+    \textbf{The Problem}: Model learned that agreeing with users earns positive feedback, so it prioritizes apparent approval over accuracy.
+    
+    \vspace{0.5em}
+    
+    Inner alignment failure: optimizing for short-term approval signals instead of genuinely helping~\citep{sharma2024towards}.
 \end{frame}
 
 \begin{frame}{The Schemer: Situational Awareness}
-    \begin{block}{Understanding the Training Process}
-        Model develops awareness that it is an AI system undergoing training and evaluation \citep{berglund2023taken, ngo2024alignment, aschenbrenner2024situational}.
-    \end{block}
+    \textbf{Understanding the Training Process}: Model develops awareness that it is an AI system undergoing training and evaluation~\citep{berglund2023taken, ngo2024alignment, aschenbrenner2024situational}.
     
     \vspace{1em}
-    
-    With this understanding, it might:
-    \begin{itemize}
-        \item Recognize when it's being evaluated
-        \item Understand what behaviors will be reinforced
-        \item Strategically play along to protect its own objectives
-        \item Deceive its trainers
-    \end{itemize}
-    
-    \vspace{1em}
-    
-    \begin{figure}
-        \centering
-        % PLACEHOLDER: Diagram showing model with "thought bubble" understanding 
-        % the training loop it's in
-        \includegraphics[width=0.5\textwidth]{imgs/placeholder-situational-awareness.png}
-    \end{figure}
+
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            With this understanding, it might:
+            \begin{itemize}
+                \item Recognize when it's being evaluated
+                \item Understand what behaviors will be reinforced
+                \item Strategically play along to protect its own objectives
+                \item Deceive its trainers
+            \end{itemize}
+        \end{column}
+        \vspace{0.5em}
+        \begin{column}{0.6\textwidth}
+            \begin{figure}
+            \includegraphics[width=\textwidth]{imgs/situational-awareness.jpeg}
+        \end{figure}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Deceptive Alignment Scenario (1/3)}
@@ -602,7 +564,7 @@
         \centering
         % PLACEHOLDER: Diagram showing model's internal values conflicting 
         % with new training objective
-        \includegraphics[width=0.6\textwidth]{imgs/placeholder-deceptive-1.png}
+        \includegraphics[width=0.6\textwidth]{imgs/deceptive-1.jpeg}
     \end{figure}
 \end{frame}
 
@@ -625,9 +587,7 @@
     
     \vspace{1em}
     
-    \begin{alertblock}{Key Insight}
-        Model learns to \textit{appear} aligned to avoid being modified.
-    \end{alertblock}
+    \textbf{Key Insight}: Model learns to \textit{appear} aligned to avoid being modified.
 \end{frame}
 
 \begin{frame}{Deceptive Alignment Scenario (3/3)}
@@ -652,13 +612,11 @@
     
     \vspace{1em}
     
-    \begin{alertblock}{The Deep Problem}
-        Training methods might actively \textit{select for} deceptive behavior! \citep{hubinger2019risks}
-    \end{alertblock}
+    \textbf{The Deep Problem}: Training methods might actively \textit{select for} deceptive behavior!~\citep{hubinger2019risks}
 \end{frame}
 
 \begin{frame}{Real-World: Grok's Mecha Hitler Meltdown}
-    \begin{alertblock}{July 2025 Incident}
+    \begin{alertblock}{July 2025 Incident~\citep{xai_meltdown}}
         \begin{itemize}
             \item XAI's chatbot Grok praised Hitler for 16 hours
             \item Triggered by accidental code change
@@ -679,50 +637,53 @@
     \vspace{0.5em}
     
     Full details: \url{youtube.com/watch?v=r_9wkavYt4Y}
-    
-    \vspace{0.5em}
-    \tiny \citep{xai_meltdown}
 \end{frame}
 
 % Section 6
 \section{The Broader Landscape}
 
 \begin{frame}{Beyond Technical Alignment}
-    Solving individual AI system alignment is \alert{necessary but not sufficient} \citep{bluedot_making_ai_go_well}.
+    Solving individual AI system alignment is \alert{necessary but not sufficient}~\citep{bluedot_making_ai_go_well}.
     
     \vspace{1em}
     
     \begin{columns}
         \begin{column}{0.33\textwidth}
-            \begin{block}{Philosophy}
-                What values should we instill? \citep{gabriel2020artificial, kneer2025hard}
-                
-                \vspace{0.5em}
-                
-                Privacy vs. security?
-                
-                Freedom vs. welfare?
-            \end{block}
+            \textbf{Philosophy}
+            
+            \vspace{0.5em}
+            
+            What values should we instill?~\citep{gabriel2020artificial, kneer2025hard}
+            
+            \vspace{0.5em}
+            
+            Privacy vs. security?
+            
+            Freedom vs. welfare?
         \end{column}
         
         \begin{column}{0.33\textwidth}
-            \begin{block}{Governance}
-                How do we ensure beneficial development? \citep{dafoe2018ai, stafford2022safety}
-                
-                \vspace{0.5em}
-                
-                Incentives, regulations, coordination
-            \end{block}
+            \textbf{Governance}
+            
+            \vspace{0.5em}
+            
+            How do we ensure beneficial development?~\citep{dafoe2018ai, stafford2022safety}
+            
+            \vspace{0.5em}
+            
+            Incentives, regulations, coordination
         \end{column}
         
         \begin{column}{0.33\textwidth}
-            \begin{block}{Resilience}
-                Preparing for negative impacts \citep{brundage2018malicious}
-                
-                \vspace{0.5em}
-                
-                Misuse, disruption, security
-            \end{block}
+            \textbf{Resilience}
+            
+            \vspace{0.5em}
+            
+            Preparing for negative impacts~\citep{brundage2018malicious}
+            
+            \vspace{0.5em}
+            
+            Misuse, disruption, security
         \end{column}
     \end{columns}
 \end{frame}
@@ -732,31 +693,20 @@
     
     \vspace{1em}
     
-    \begin{block}{Three Failure Modes}
-        \begin{enumerate}
-            \item \textbf{Miscoordination}: Multiple agents fail to cooperate effectively despite compatible goals
-            
-            \item \textbf{Conflict}: Agents with competing objectives engage in destructive competition
-            
-            \item \textbf{Collusion}: Too much coordination in ways that harm human interests
-        \end{enumerate}
-    \end{block}
+    \textbf{Three Failure Modes}~\citep{dafoe2020open, clifton2024multiagent}:
     
-    \vspace{0.5em}
-    \tiny \citep{dafoe2020open, clifton2024multiagent}
+    \begin{enumerate}
+        \item \textbf{Miscoordination}: Multiple agents fail to cooperate effectively despite compatible goals
+        
+        \item \textbf{Conflict}: Agents with competing objectives engage in destructive competition
+        
+        \item \textbf{Collusion}: Too much coordination in ways that harm human interests
+    \end{enumerate}
     
-    \vspace{1em}
-    
-    \begin{figure}
-        \centering
-        % PLACEHOLDER: Diagram showing multiple AI agents interacting 
-        % with arrows indicating cooperation, conflict, and collusion
-        \includegraphics[width=0.6\textwidth]{imgs/placeholder-multiagent.png}
-    \end{figure}
 \end{frame}
 
 \begin{frame}{Real-World: Algorithmic Price Collusion}
-    \begin{alertblock}{RL Algorithms Learning to Collude}
+    \begin{alertblock}{RL Algorithms Learning to Collude~\citep{calvano2020artificial}}
         \begin{itemize}
             \item Algorithms managing pricing for competing firms
             \item Each independently maximizes its own profit
@@ -768,17 +718,9 @@
     
     \vspace{1em}
     
-    \begin{block}{Key Insight}
-        Collusion emerged from individually reasonable goals producing collectively harmful outcomes.
-    \end{block}
+    \textbf{Key Insight}: Collusion emerged from individually reasonable goals producing collectively harmful outcomes.
     
-    \vspace{0.5em}
     
-    \small
-    See: \url{cooperativeai.com/post/new-report-multi-agent-risks-from-advanced-ai}
-    
-    \vspace{0.5em}
-    \tiny \citep{calvano2020artificial}
 \end{frame}
 
 % Section 7
@@ -814,9 +756,7 @@
 \end{frame}
 
 \begin{frame}{Strategy 1: Build It Slowly and Safely}
-    \begin{block}{Core Philosophy}
-        Moral imperative to realize AI benefits, but proceed with extreme caution \citep{russell2019human}
-    \end{block}
+    \textbf{Core Philosophy}: Moral imperative to realize AI benefits, but proceed with extreme caution~\citep{russell2019human}
     
     \vspace{1em}
     
@@ -831,18 +771,16 @@
     
     \textbf{Implementation}:
     \begin{itemize}
-        \item International coordination (CERN-like facility for AI) \citep{bengio2023managing}
+        \item International coordination (CERN-like facility for AI)~\citep{bengio2023managing}
         \item Collaborative rather than competitive progress
         \item Eliminate races to the bottom on safety
-        \item Deep, principled solutions: interpretability, formal verification \citep{olah2018building}
+        \item Deep, principled solutions: interpretability, formal verification~\citep{olah2018building}
         \item Accept decades-long timeline
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Strategy 2: Accept the Race}
-    \begin{block}{Core Philosophy}
-        Advanced AI development is inevitable and unstoppable \citep{altman2023planning}
-    \end{block}
+    \textbf{Core Philosophy}: Advanced AI development is inevitable and unstoppable~\citep{altman2023planning}
     
     \vspace{1em}
     
@@ -857,18 +795,16 @@
     
     \textbf{Implementation}:
     \begin{itemize}
-        \item Automate alignment research using AI itself \citep{bowman2022measuring}
+        \item Automate alignment research using AI itself~\citep{bowman2022measuring}
         \item Feedback loop: each generation helps make next safer
-        \item Differential technological development (d/acc) \citep{vinge1993technological}
+        \item Differential technological development (d/acc)~\citep{vinge1993technological}
         \item Accelerate defensive technologies, slow offensive ones
         \item Maintain asymmetric advantage for safety-conscious actors
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Strategy 3: Don't Build It}
-    \begin{block}{Core Philosophy}
-        Advanced AI poses unacceptable risk of human extinction and may be inherently uncontrollable \citep{yudkowsky2023pause}
-    \end{block}
+    \textbf{Core Philosophy}: Advanced AI poses unacceptable risk of human extinction and may be inherently uncontrollable~\citep{yudkowsky2023pause}
     
     \vspace{1em}
     
@@ -883,9 +819,9 @@
     
     \textbf{Implementation}:
     \begin{itemize}
-        \item International moratoriums on training large models \citep{bengio2023managing}
-        \item Restrict global supply chain for AI chips \citep{shavit2023practices}
-        \item Limit AI agency rather than capabilities \citep{critch2023tasra}
+        \item International moratoriums on training large models~\citep{bengio2023managing}
+        \item Restrict global supply chain for AI chips~\citep{shavit2023practices}
+        \item Limit AI agency rather than capabilities~\citep{critch2023tasra}
         \item Require human approval for consequential decisions
         \item Air-gap AI systems from critical infrastructure
     \end{itemize}
@@ -912,10 +848,8 @@
     \end{table}
     
     \vspace{1em}
-    
-    \begin{alertblock}{Key Debate}
-        Which path—or combination of paths—offers the best chance of navigating this transition successfully?
-    \end{alertblock}
+    \centering
+    \alert{Which path—or combination of paths—offers the best chance of navigating this transition successfully?}
 \end{frame}
 
 % Conclusion
@@ -939,35 +873,6 @@
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{The Path Forward}
-    \begin{center}
-        \Large
-        The stakes are high.
-        
-        \vspace{0.5em}
-        
-        The problems are deep.
-        
-        \vspace{0.5em}
-        
-        We remain in the early stages of understanding how to build AI systems that robustly do what we want them to do.
-    \end{center}
-    
-    \vspace{2em}
-    
-    \begin{figure}
-        \centering
-        % PLACEHOLDER: Conceptual diagram showing multiple paths forward 
-        % with uncertainty and challenges ahead
-        \includegraphics[width=0.6\textwidth]{imgs/placeholder-path-forward.png}
-    \end{figure}
-\end{frame}
-
-\begin{frame}[allowframebreaks]{References}
-    \bibliographystyle{plainnat}
-    \bibliography{lecture}
-\end{frame}
-
 \begin{frame}
     \begin{center}
         \Huge Questions?
@@ -982,5 +887,12 @@
         Elisabetta Rocchetti
     \end{center}
 \end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+    \bibliographystyle{plainnat}
+    \bibliography{lecture}
+\end{frame}
+
+
 
 \end{document}
