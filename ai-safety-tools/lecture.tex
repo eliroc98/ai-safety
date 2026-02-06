@@ -175,6 +175,34 @@ A framework for evaluating AI control protocols and oversight mechanisms~\citep{
 \textbf{Repository:} \url{https://github.com/UKGovernmentBEIS/control-arena}
 \end{resourcebox}
 
+\subsection{SAIL Framework}
+
+A process-oriented methodology for managing AI security throughout the entire AI system lifecycle~\citep{sail2024}. Developed by Pillar Security, SAIL (Secure AI Lifecycle) provides a practical framework to systematically add security controls at each phase of AI development and deployment. The framework unites development, MLOps, security, and governance teams around a common language for managing AI-specific risks. SAIL covers seven phases: Plan (AI policy and safe experimentation), Code/No Code (AI asset discovery), Build (AI security posture management), Test (AI red teaming), Deploy (runtime guardrails), Operate (safe execution environments), and Monitor (AI activity tracing). Each phase addresses specific security risks with detailed controls and mitigation strategies. The framework provides risk assessment templates, threat modeling guidance, and compliance mapping to regulatory requirements. Designed for practitioners, SAIL offers a comprehensive roadmap for building trustworthy AI systems with appropriate security controls at each lifecycle stage.
+
+\begin{objectivebox}{Objective \& Scope}
+\textbf{Primary Purpose:} Lifecycle-oriented security framework for managing AI-specific risks across development, deployment, and operation.
+
+\textbf{Scope:} 7-phase methodology covering policy, asset discovery, security posture management, red teaming, runtime protection, safe execution, and monitoring.
+
+\textbf{Output:} Security roadmaps, risk assessment documentation, compliance mappings, threat models, audit trails.
+\end{objectivebox}
+
+\begin{techbox}{Technical Requirements}
+\textbf{Supported Models:} Framework-agnostic; applies to any AI system regardless of architecture or deployment method.
+
+\textbf{Compute Requirements:} None (methodology and assessment framework).
+
+\textbf{Dependencies:} None for framework adoption; implementation may require various security tools depending on phase.
+
+\textbf{Usage:} Process framework with assessment templates, risk catalogs, and implementation guidance. Can be used with Pillar Security platform for automated analysis.
+\end{techbox}
+
+\begin{resourcebox}{Resources}
+\textbf{Framework Website:} \url{https://www.pillar.security/sail}
+
+\textbf{Key Features:} 7-phase lifecycle coverage; 100+ specific AI security risks cataloged; threat modeling integration; regulatory compliance mapping; red teaming methodology; runtime guardrails specification; monitoring and incident response guidance; community-driven with practitioner feedback.
+\end{resourcebox}
+
 \section{Mechanistic Interpretability Tools}
 
 Mechanistic interpretability aims to reverse-engineer neural networks by identifying the algorithms and representations they learn~\citep{olah2020zoom}. These tools enable researchers to decompose model computations into interpretable components.
@@ -535,6 +563,38 @@ Early intervention library by David Bau, focusing on CNN interpretability and ac
 \textbf{Key Features:} Activation editing; neuron visualization; causal interventions; originally designed for CNN interpretability.
 \end{resourcebox}
 
+\subsection{Concordance Token Injection Lab}
+
+A web-based playground for exploring token injection as a steering mechanism~\citep{concordance2024}. Enables researchers to inject words, concepts, or phrases directly into an LLM's generation stream to observe and control output trajectories in real-time. The tool provides an interactive interface for token injection experiments, real-time observation of steering effects, phrase pair detection and replacement functionality, configurable injection positions and strategies, and support for multiple model backends. Designed for rapid experimentation with token-level steering, the system operates entirely through a web interface without requiring local infrastructure. Outputs include steered model generations, injection behavior logs, and comparative analyses of intervention effects.
+
+\begin{objectivebox}{Objective \& Scope}
+\textbf{Primary Purpose:} Interactive web playground for token injection experiments and LLM output steering.
+
+\textbf{Scope:} Real-time token/phrase injection, detection-replacement pairs, trajectory steering, behavioral observation.
+
+\textbf{Output:} Steered generations, injection logs, comparative results.
+\end{objectivebox}
+
+\begin{techbox}{Technical Requirements}
+\textbf{Supported Models:} API-accessible LLMs; model selection available through web interface.
+
+\textbf{Compute Requirements:} None for users (web-based platform with remote compute).
+
+\textbf{Dependencies:} Web browser only.
+
+\textbf{Usage:} Interactive web application. Accessible via browser without installation or infrastructure requirements.
+\end{techbox}
+
+\begin{resourcebox}{Resources}
+\textbf{Playground:} \url{https://research.concordance.co/playground}
+
+\textbf{Research Paper:} \url{https://www.concordance.co/blog/token-injection-steering-llms}
+
+\textbf{Documentation:} \url{https://docs.concordance.co/}
+
+\textbf{Key Features:} Phrase pair detection and replacement; configurable injection positions; real-time steering visualization; system prompt control; temperature and token limit configuration; experiment history tracking.
+\end{resourcebox}
+
 \section{Open-Weight Assets and Training Checkpoints}
 
 While many evaluation and interpretability tools operate on black-box APIs, deep safety research often requires full access to model weights, training data, and intermediate states. A growing ecosystem of "open science" models provides these assets, enabling researchers to study learning dynamics, phase transitions in capability, and the emergence of specific behaviors over time.
@@ -572,6 +632,22 @@ Training Sparse Autoencoders (SAEs) is computationally expensive, often exceedin
 \textbf{Pythia Collection:} \url{https://huggingface.co/EleutherAI}
 \textbf{OLMo Ecosystem:} \url{https://allenai.org/olmo}
 \end{resourcebox}
+
+\section{Benchmarks for Evaluating Interpretability Techniques}
+
+As mechanistic interpretability methods proliferate, systematic benchmarks have emerged to evaluate their effectiveness. These benchmarks provide standardized tests for comparing techniques across well-defined tasks, enabling researchers to make informed choices about which methods to employ~\citep{rai2024practical}.
+
+\subsection{Benchmarks for Feature Study Techniques}
+
+Several benchmarks evaluate how well various techniques can identify meaningful feature vectors for specific concepts (targeted feature study) or discover features in an open-ended manner. \textbf{CausalGym}~\citep{arora2024causalgym} introduces a suite of linguistic tasks testing the effectiveness of techniques in discovering feature vectors corresponding to given concepts, showing that Distributed Alignment Search (DAS) outperforms alternatives like probing. \textbf{RAVEL} (Resolving Attribute--Value Entanglements in Language Models)~\citep{huang2024ravel} benchmarks targeted feature study methods on their ability to localize and disentangle specific attributes of entities (e.g., ``Paris is on the continent of''), again demonstrating DAS achieving the strongest performance over SAE and probing methods.
+
+\textbf{Mechanistic Interpretability Benchmark (MIB)}~\citep{mueller2025mib} provides broader coverage of both targeted and open-ended feature study. While MIB confirms DAS as the best technique for isolating feature vectors for given concepts, it reports a surprising finding for open-ended feature study: SAE features are no more effective than individual neurons at isolating meaningful features, contrary to prior claims. \textbf{SAEBench}~\citep{karvonen2025saebench} offers a comprehensive evaluation suite comparing various SAE architectures and training setups across eight diverse metrics including interpretability, feature disentanglement, and practical applications such as unlearning. Results indicate that Matryoshka SAEs achieve the best overall performance, particularly in feature disentanglement. Finally, \textbf{FIND} (Function INterpretation and Description)~\citep{schwettmann2023find} focuses on evaluating the correctness of interpretability language model agents in describing the latent functions implemented by model components, assessing the explanation step of open-ended feature study.
+
+\subsection{Benchmarks for Circuit Study Techniques}
+
+Evaluating circuit localization techniques presents unique challenges. Some works employ collections of synthetic~\citep{lindner2024synthetic} or semi-synthetic~\citep{gupta2024semisynthetic} transformers with known circuits, where ground truth availability simplifies evaluation. Results from these studies show that ACDC (Automatic Circuit DisCovery) and EAP-IG (Edge Attribution Patching with Integrated Gradients) achieve the strongest performance. However, concerns remain that such synthetic benchmarks may not faithfully capture the behavior of standard pre-trained transformers.
+
+To address this limitation, \textbf{MIB}~\citep{mueller2025mib} evaluates circuit localization techniques on both semi-synthetic and standard pre-trained transformer models. Their results confirm that EAP-IG outperforms other approaches like edge patching across both settings, providing evidence that findings from synthetic benchmarks can generalize to real-world models. These benchmarks collectively enable rigorous comparison of circuit discovery methods, helping researchers select appropriate techniques for their specific interpretability goals.
 
 \section{Computational Considerations}
 
@@ -723,6 +799,10 @@ The following decision tree helps identify the most appropriate tools based on r
 \end{figure}
 
 \textbf{Visualization and Auxiliary Tools:} Regardless of your primary path, several tools support any workflow. Use \textbf{CircuitsVis} for creating interactive visualizations of activations and attention patterns. \textbf{Neuronpedia} provides a web-based platform for exploring pre-computed SAE features and sharing interpretability findings. \textbf{Transformer Debugger} offers an interactive GUI for rapid exploration when working with small models like GPT-2.
+
+\subsection{Comparative Analysis of Mechanistic Interpretability Tools}
+
+Mechanistic interpretability tools can be systematically compared across two primary dimensions: \textbf{(a) model support and extensibility}, and \textbf{(b) interactivity and ease-of-use}~\citep{somvanshi2025bridging}. On the extensibility dimension, \textbf{nnsight} exemplifies maximum flexibility, working with any PyTorch model and supporting remote compute via NDIF, while \textbf{CircuitsVis} is model-agnostic for visualizations, accepting any activation data regardless of source. \textbf{TransformerLens} balances extensibility with convenience, supporting 100+ pre-configured transformer architectures with clean activation access. On the interactivity dimension, \textbf{Neuronpedia} and \textbf{Transformer Debugger} provide fully GUI-based experiences accessible to researchers without coding requirements—Neuronpedia operates entirely in the browser for exploring SAE features, while Transformer Debugger offers real-time interactive investigation of model behaviors with automated GPT-4 explanations. In contrast, \textbf{TransformerLens}, \textbf{nnsight}, and \textbf{pyvene} are code-first libraries requiring programmatic workflows but offering maximum research flexibility. \textbf{SAELens} bridges both categories: it requires coding for SAE training but generates interactive SAE-Vis dashboards for feature exploration. The field employs several fundamental techniques including activation patching (identifying causal factors), sparse autoencoders (decomposing activations into interpretable features), induction head tracing (detecting pattern-reproducing attention heads), logit lens (visualizing layer-wise predictions), and toy models (simplified systems for controlled study), together representing the spectrum of techniques for making AI systems comprehensible and trustworthy~\citep{somvanshi2025bridging}.
 
 \section{Community Resources}
 
